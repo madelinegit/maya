@@ -1,30 +1,27 @@
 async function send() {
+    const input = document.getElementById("msg")
+    const chat = document.getElementById("chat")
+    const text = input.value
+    if (!text.trim()) return
 
-const input = document.getElementById("msg")
-const chat = document.getElementById("chat")
+    chat.innerHTML += `<div class="mb-2"><b>You:</b> ${text}</div>`
+    input.value = ""
 
-const text = input.value
+    const res = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text })
+    })
 
-chat.innerHTML += `<div><b>You:</b> ${text}</div>`
+    const data = await res.json()
+    const reply = data.reply
 
-const res = await fetch("/chat", {
+    if (reply.startsWith("[IMAGE]") && reply.includes("[/IMAGE]")) {
+        const url = reply.replace("[IMAGE]", "").replace("[/IMAGE]", "").trim()
+        chat.innerHTML += `<div class="mb-2"><b>Maya:</b><br><img src="${url}" style="max-width:100%;border-radius:8px;margin-top:6px;"></div>`
+    } else {
+        chat.innerHTML += `<div class="mb-2"><b>Maya:</b> ${reply}</div>`
+    }
 
-method: "POST",
-
-headers: {
-"Content-Type": "application/json"
-},
-
-body: JSON.stringify({
-message: text
-})
-
-})
-
-const data = await res.json()
-
-chat.innerHTML += `<div><b>Maya:</b> ${data.reply}</div>`
-
-input.value = ""
-
+    chat.scrollTop = chat.scrollHeight
 }

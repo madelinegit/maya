@@ -3,9 +3,20 @@ import requests
 from app.config import MODELSLAB_API_KEY, MODELSLAB_API_URL, MODELSLAB_MODEL
 from app.ai.memory import get_history, add_message
 from app.ai.persona import load_persona
+from app.ai.image import generate_image
 
 
 def generate_reply(user_id, message):
+
+       # IMAGE DETECTION - ADD THIS BLOCK
+    lowered = message.lower()
+    if any(phrase in lowered for phrase in ["generate an image", "make an image", "create an image", "show me an image", "generate image"]):
+        image_url = generate_image(message)
+        if image_url:
+            return f"[IMAGE]{image_url}[/IMAGE]"
+        else:
+            return "I tried to generate an image but something went wrong. Try again!"
+
 
     persona = load_persona()
     history = get_history(user_id)

@@ -11,6 +11,9 @@ def get_history(user_id):
 
 def add_message(user_id, role, content):
 
+    if not content or not content.strip():
+        return
+
     history = get_history(user_id)
 
     history.append({
