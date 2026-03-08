@@ -6,7 +6,7 @@ def generate_image(prompt):
 
     payload = {
     "key": MODELSLAB_API_KEY,
-    "model_id": "freja-original-model-v1-xl",
+    "model_id":MODELSLAB_IMAGE_MODEL,
     "prompt": prompt,
     "negative_prompt": "bad quality, blurry, distorted, watermark",
     "width": "512",

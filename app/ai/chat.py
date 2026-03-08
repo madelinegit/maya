@@ -1,4 +1,6 @@
 import requests
+import asyncio 
+import random
 
 from app.config import MODELSLAB_API_KEY, MODELSLAB_API_URL, MODELSLAB_MODEL
 from app.ai.memory import get_history, add_message
@@ -8,15 +10,37 @@ from app.ai.image import generate_image
 
 def generate_reply(user_id, message):
 
-       # IMAGE DETECTION - ADD THIS BLOCK
     lowered = message.lower()
-    if any(phrase in lowered for phrase in ["generate an image", "make an image", "create an image", "show me an image", "generate image"]):
-        image_url = generate_image(message)
+
+    image_triggers = [
+        "show me you", "show me a pic", "show me a photo",
+        "show me a picture", "show me what you look like",
+        "show me yourself", "let me see you", "can i see you",
+        "send me a pic", "send me a photo", "send me a picture",
+        "send a pic", "send a photo", "send a picture",
+        "drop a pic", "drop a photo", "drop a picture",
+        "take a pic", "take a photo", "take a picture",
+        "pic of you", "photo of you", "picture of you",
+        "what do you look like", "show yourself",
+        "post a pic", "post a photo", "post a picture",
+        "snap a pic", "snap a photo", "snap a picture",
+        "got a pic", "got a photo", "got any pics", "got any photos",
+        "see you", "see a pic", "see a photo", "see a picture"
+    ]
+
+    if any(phrase in lowered for phrase in image_triggers):
+        image_prompt = message.replace("show me", "").replace("send me", "")
+        image_prompt = image_prompt.replace("a pic of", "").replace("a photo of", "")
+        image_prompt = image_prompt.replace("a picture of", "").strip()
+
+        if len(image_prompt) < 5:
+            image_prompt = "Maya, beautiful woman, natural lighting, photorealistic"
+
+        image_url = generate_image(image_prompt)
         if image_url:
             return f"[IMAGE]{image_url}[/IMAGE]"
         else:
             return "I tried to generate an image but something went wrong. Try again!"
-
 
     persona = load_persona()
     history = get_history(user_id)
@@ -30,9 +54,9 @@ def generate_reply(user_id, message):
     })
 
     payload = {
-    "model": MODELSLAB_MODEL,
-    "messages": messages
-}
+        "model": MODELSLAB_MODEL,
+        "messages": messages
+    }
 
     headers = {
         "Authorization": f"Bearer {MODELSLAB_API_KEY}",
@@ -64,3 +88,5 @@ def generate_reply(user_id, message):
     add_message(user_id, "assistant", reply)
 
     return reply
+
+   

@@ -21,6 +21,12 @@ async function send() {
         chat.innerHTML += `<div class="mb-2"><b>Maya:</b><br><img src="${url}" style="max-width:100%;border-radius:8px;margin-top:6px;"></div>`
     } else {
         chat.innerHTML += `<div class="mb-2"><b>Maya:</b> ${reply}</div>`
+        chat.scrollTop = chat.scrollHeight
+
+        if (data.followup) {
+            await new Promise(r => setTimeout(r, 2000 + Math.random() * 2000))
+            chat.innerHTML += `<div class="mb-2"><b>Maya:</b> ${data.followup}</div>`
+        }
     }
 
     chat.scrollTop = chat.scrollHeight
