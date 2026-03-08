@@ -19,9 +19,9 @@ def generate_reply(user_id, message):
     })
 
     payload = {
-        "model_id": MODELSLAB_MODEL,
-        "prompt": "\n".join([m["content"] for m in messages])
-    }
+    "model": MODELSLAB_MODEL,
+    "messages": messages
+}
 
     headers = {
         "Authorization": f"Bearer {MODELSLAB_API_KEY}",
